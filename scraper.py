@@ -7,15 +7,11 @@ def code_block_to_str(code_snippet):
     code_str = ""
     # find all lines of this code snippet
     lines = code_snippet.find_all("span", class_="line")
-    for idx, line in enumerate(lines):
+    for line in lines:
         # get the words from each line and add them to the string
         words = line.find("span", class_="cl").find_all("span")
         for word in words:
             code_str += word.text
-        
-        # add a line break if it's not the last line
-        if idx != len(lines) - 1:
-            code_str += "\n"
     return code_str
 
 def get_all_sql_code_snippets(url):
