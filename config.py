@@ -1,6 +1,5 @@
-# GPT configs
-gpt_model = "code-davinci-002"
-gpt_max_tokens = 30
+gpt_model = "text-davinci-003"
+gpt_max_tokens = 64
 
 # scraper configs
 scrape_url = "https://nightlies.apache.org/flink/flink-docs-master/"
