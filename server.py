@@ -1,13 +1,11 @@
 from flask import Flask, request
+from openai import GPTAutocompletions, GPTStatementAnalysis
 
-from openapi import GPTAutocompletions, GPTStatementAnalysis
 app = Flask(__name__)
-
 
 @app.route("/")
 def hello():
     return "Hello World!"
-
 
 @app.route("/autocomplete/gpt", methods=['GET'])
 def getAutocompleteGPT():
@@ -17,7 +15,6 @@ def getAutocompleteGPT():
     query = request.args['query']
 
     return GPTAutocompletions(query)
-
 
 @app.route("/autocomplete/gpt/analysis", methods=['GET'])
 def getAnalysisGPT():
