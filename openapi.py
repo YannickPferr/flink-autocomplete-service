@@ -6,7 +6,7 @@ import config
 openai.api_key = secrets_config.openapikey
 
 
-def generateGPTAutocompletions(query: str):
+def GPTAutocompletions(query: str) -> list:
     url = "https://api.openai.com/v1/engines/davinci/completions"
 
     """ response = openai.Completion.create(
@@ -28,3 +28,17 @@ def generateGPTAutocompletions(query: str):
     suggestions = list(filter(None, textResponse.split("\n")))
 
     return suggestions
+
+
+def GPTStatementAnalysis(query: str) -> str:
+    response = openai.Completion.create(
+        model=config.gpt_model,
+        prompt="${query}\n\n/* Describe the previous Flink SQL */",
+        temperature=0.7,
+        max_tokens=config.gpt_max_tokens,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    return response.choices[0].text

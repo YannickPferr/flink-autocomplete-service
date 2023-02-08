@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-from openapi import generateGPTAutocompletions
+from openapi import GPTAutocompletions, GPTStatementAnalysis
 app = Flask(__name__)
 
 
@@ -16,7 +16,17 @@ def getAutocompleteGPT():
 
     query = request.args['query']
 
-    return generateGPTAutocompletions(query)
+    return GPTAutocompletions(query)
+
+
+@app.route("/autocomplete/gpt/analysis", methods=['GET'])
+def getAnalysisGPT():
+    if ('query' not in request.args):
+        return "Error: No query field provided. Please specify a query."
+
+    query = request.args['query']
+
+    return GPTStatementAnalysis(query)
 
 
 if __name__ == '__main__':
