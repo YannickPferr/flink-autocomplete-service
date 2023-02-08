@@ -3,10 +3,6 @@ from service import autocomplete_with_docs, autocomplete_with_gpt, explanation_w
 
 app = Flask(__name__)
 
-@app.route("/")
-def hello():
-    return "Hello World!"
-
 @app.route("/autocomplete", methods=['GET'])
 def get_autocompletion_with_docs():
     if ('query' not in request.args):
