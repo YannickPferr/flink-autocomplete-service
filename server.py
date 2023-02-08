@@ -1,5 +1,5 @@
 from flask import Flask, request
-from openai import GPTAutocompletions, GPTStatementAnalysis
+from openai import autocomplete_with_gpt, explanation_with_gpt
 
 app = Flask(__name__)
 
@@ -8,22 +8,22 @@ def hello():
     return "Hello World!"
 
 @app.route("/autocomplete/gpt", methods=['GET'])
-def getAutocompleteGPT():
+def get_autocompletion_with_gpt():
     if ('query' not in request.args):
         return "Error: No query field provided. Please specify a query."
 
     query = request.args['query']
 
-    return GPTAutocompletions(query)
+    return autocomplete_with_gpt(query)
 
 @app.route("/autocomplete/gpt/analysis", methods=['GET'])
-def getAnalysisGPT():
+def get_explanation_with_gpt():
     if ('query' not in request.args):
         return "Error: No query field provided. Please specify a query."
 
     query = request.args['query']
 
-    return GPTStatementAnalysis(query)
+    return explanation_with_gpt(query)
 
 
 if __name__ == '__main__':
