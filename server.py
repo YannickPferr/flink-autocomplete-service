@@ -1,11 +1,20 @@
 from flask import Flask, request
-from openai import autocomplete_with_gpt, explanation_with_gpt
+from service import autocomplete_with_docs, autocomplete_with_gpt, explanation_with_gpt
 
 app = Flask(__name__)
 
 @app.route("/")
 def hello():
     return "Hello World!"
+
+@app.route("/autocomplete", methods=['GET'])
+def get_autocompletion_with_docs():
+    if ('query' not in request.args):
+        return "Error: No query field provided. Please specify a query."
+
+    query = request.args['query']
+
+    return autocomplete_with_docs(query)
 
 @app.route("/autocomplete/gpt", methods=['GET'])
 def get_autocompletion_with_gpt():

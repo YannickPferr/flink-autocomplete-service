@@ -4,6 +4,11 @@ import config
 
 openai.api_key = secrets_config.openapikey
 
+def autocomplete_with_docs(query: str) -> list:
+    suggestions = list(filter(None, query.split("\n")))
+
+    return suggestions
+
 def autocomplete_with_gpt(query: str) -> list:
     url = "https://api.openai.com/v1/engines/davinci/completions"
 
