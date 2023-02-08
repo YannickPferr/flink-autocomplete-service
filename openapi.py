@@ -11,7 +11,7 @@ def GPTAutocompletions(query: str) -> list:
 
     """ response = openai.Completion.create(
         model=config.gpt_model,
-        prompt="${query}\n\n/* Generate multiple auto completions for the previous Flink SQL */",
+        prompt=f"{query}\n\n/* Generate multiple auto completions for the previous Flink SQL */",
         temperature=0.7,
         max_tokens=config.gpt_max_tokens,
         top_p=1,
@@ -33,7 +33,7 @@ def GPTAutocompletions(query: str) -> list:
 def GPTStatementAnalysis(query: str) -> str:
     response = openai.Completion.create(
         model=config.gpt_model,
-        prompt="${query}\n\n/* Describe the previous Flink SQL */",
+        prompt=f"{query}\n\n/* Describe the previous Flink SQL */",
         temperature=0.7,
         max_tokens=config.gpt_max_tokens,
         top_p=1,
