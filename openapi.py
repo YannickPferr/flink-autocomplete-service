@@ -1,7 +1,9 @@
+
 import os
 import openai
+import config
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = config.openapikey
 
 response = openai.Completion.create(
     model="code-davinci-002",
