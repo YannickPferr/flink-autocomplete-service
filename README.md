@@ -1,6 +1,27 @@
 # flink-autocomplete-service
 
+## Use cases
+
+1. Create suggestions based on incomplete queries
+
+get /autocomplete?query="sele"
+response: []{
+{statement: "select _ from orders", description: "selects all data from table orders"},
+{statement: "select _ from orders", description: "selects all data from table orders"}
+}
+
+get /autocomplete/gpt?query="sele"
+response: []{
+{statement: "select _ from orders", description: "selects all data from table orders"},
+{statement: "select _ from orders", description: "selects all data from table orders"}
+}
+
+get /autocomplemente/gpt/analysis?query="select \* from orders"
+response: string
+" This query fetchs the database...."
+
 ## Installation
+
 ```
 # clone the repo
 git clone https://github.com/YannickPferr/flink-autocomplete-service.git
@@ -13,6 +34,7 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+
 ```
 # start the server
 python server.py
