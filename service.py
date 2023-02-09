@@ -1,11 +1,41 @@
 import openai
 import secrets_config
 import config
+import json
+import heapq
 
 openai.api_key = secrets_config.openapikey
 
 def autocomplete_with_docs(query: str) -> list:
-    suggestions = list(filter(None, query.split("\n")))
+    # load code snippets from file
+    code_snippets_dict = {}
+    with open('snippets.json') as f:
+        code_snippets_dict = json.load(f)
+    
+    # build a max heap that contains the best suggestions ranked by earliest occurence of query
+    max_heap = []
+    for page in code_snippets_dict:
+        code_snippets_from_page = code_snippets_dict[page]
+        for code_snippet in code_snippets_from_page:
+            try:
+                index_of_query = code_snippet.lower().index(query.lower())
+                # if heap has still space add snippet directly
+                if len(max_heap) < config.autocomplete_max_suggestions:
+                    heapq.heappush(max_heap, (-index_of_query, code_snippet))
+                    continue
+                
+                # otherwise check if this element has a better score than the worst element in the heap
+                if index_of_query < max_heap[0][0]:
+                    # remove snippet and add better snippet
+                    heapq.heappop(max_heap)
+                    heapq.heappush(max_heap, (-index_of_query, code_snippet))
+            except ValueError:
+                pass
+
+    # iterate heap from the back (last element is best)
+    suggestions = []
+    while len(max_heap) > 0:
+        suggestions.insert(0, heapq.heappop(max_heap)[1])
 
     return suggestions
 
