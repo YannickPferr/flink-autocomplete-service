@@ -46,38 +46,47 @@ const CodeEditor = () => {
     []
   )
 
-  const fetchQueryExplanation = (input) => {
-    fetch('http://localhost:8000//autocomplete/gpt/analysis?query=' + input)
+  const fetchQueryExplanation = currentText => {
+    fetch('http://localhost:8000//autocomplete/gpt/analysis?query=' + currentText)
       .then((response) => response.text())
-      .then((queryExplanationResponse) => setSuggestionWindow([queryExplanationResponse]))
+      .then((queryExplanationResponse) => {
+        setSuggestionWindow([queryExplanationResponse])
+        setTarget(null)
+      })
   }
 
-  const fetchQuerySuggestions = (input) => {
-    fetch('http://localhost:8000/autocomplete?query=' + input)
+  const fetchQuerySuggestions = (currentRange, currentText) => {
+    fetch('http://localhost:8000/autocomplete?query=' + currentText)
       .then((response) => response.json())
-      .then((querySuggestionsRepsonse) => setSuggestionWindow(querySuggestionsRepsonse))
+      .then((querySuggestionsRepsonse) => {
+        setSuggestionWindow(querySuggestionsRepsonse)
+        setTarget(currentRange)
+      })
   }
 
   const onKeyDown = useCallback(
     event => {
-      if (target && suggestionWindow.length > 0) {
+      if (suggestionWindow.length > 0) {
         switch (event.key) {
           case 'ArrowDown':
             event.preventDefault()
-            const prevIndex = index >= suggestionWindow.length - 1 ? 0 : index + 1
-            setIndex(prevIndex)
+            const nextIndex = index + 1 >= suggestionWindow.length ? 0 : index + 1
+            setIndex(nextIndex)
             break
           case 'ArrowUp':
             event.preventDefault()
-            const nextIndex = index <= 0 ? suggestionWindow.length - 1 : index - 1
-            setIndex(nextIndex)
+            const prevIndex = index - 1 < 0 ? suggestionWindow.length - 1 : index - 1
+            setIndex(prevIndex)
             break
           case 'Tab':
           case 'Enter':
             event.preventDefault()
-            Transforms.select(editor, target)
-            insertMention(editor, suggestionWindow[index])
-            setTarget(null)
+            if (target) {
+              Transforms.select(editor, target)
+              insertSuggestion(editor, suggestionWindow[index])
+              setSuggestionWindow([])
+              setTarget(null)
+            }
             break
           case 'Escape':
             event.preventDefault()
@@ -115,10 +124,9 @@ const CodeEditor = () => {
             const lastChar = currentText.charAt(currentText.length - 1)
             if (lastChar === ';') {
               fetchQueryExplanation(currentText)
-              setTarget(currentRange)
+              
             } else {
-              fetchQuerySuggestions(currentText)
-              setTarget(currentRange)
+              fetchQuerySuggestions(currentRange, currentText)
             }
           } else {
             setTarget(null)
@@ -136,7 +144,7 @@ const CodeEditor = () => {
         onKeyDown={onKeyDown}
         placeholder="Enter a query..."
       />
-      {target && suggestionWindow.length > 0 && (
+      {suggestionWindow.length > 0 && (
         <Portal>
           <div
             ref={ref}
@@ -189,10 +197,10 @@ const withMentions = editor => {
   return editor
 }
 
-const insertMention = (editor, character) => {
+const insertSuggestion = (editor, suggestion) => {
   const mention = {
     type: 'mention',
-    character,
+    suggestion: suggestion,
     children: [{ text: '' }],
   }
   Transforms.insertNodes(editor, mention)
@@ -255,10 +263,10 @@ const Mention = ({ attributes, children, element }) => {
     <span
       {...attributes}
       contentEditable={false}
-      data-cy={`mention-${element.character.replace(' ', '-')}`}
+      data-cy={`mention-${element.suggestion.replace(' ', '-')}`}
       style={style}
     >
-      {children}@{element.character}
+      {children}{element.suggestion}
     </span>
   )
 }
