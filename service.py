@@ -6,12 +6,13 @@ import heapq
 
 openai.api_key = secrets_config.openapikey
 
-def autocomplete_with_docs(query: str) -> list:
+
+def autocomplete_from_docs(query: str) -> list:
     # load code snippets from file
     code_snippets_dict = {}
     with open('snippets.json') as f:
         code_snippets_dict = json.load(f)
-    
+
     # build a max heap that contains the best suggestions ranked by earliest occurence of query
     max_heap = []
     for page in code_snippets_dict:
@@ -23,7 +24,7 @@ def autocomplete_with_docs(query: str) -> list:
                 if len(max_heap) < config.autocomplete_max_suggestions:
                     heapq.heappush(max_heap, (-index_of_query, code_snippet))
                     continue
-                
+
                 # otherwise check if this element has a better score than the worst element in the heap
                 if index_of_query < max_heap[0][0]:
                     # remove snippet and add better snippet
@@ -33,11 +34,12 @@ def autocomplete_with_docs(query: str) -> list:
                 pass
 
     # iterate heap from the back (last element is best)
-    suggestions = []
+    suggestions = list()
     while len(max_heap) > 0:
         suggestions.insert(0, heapq.heappop(max_heap)[1])
 
     return suggestions
+
 
 def autocomplete_with_gpt(query: str) -> list:
     url = "https://api.openai.com/v1/engines/davinci/completions"
