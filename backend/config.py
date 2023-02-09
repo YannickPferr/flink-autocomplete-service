@@ -1,6 +1,7 @@
 # GPT configs
 gpt_model = "text-davinci-003"
 gpt_max_tokens = 64
+fake_service = True
 
 # autocomplete configs
 autocomplete_max_suggestions = 10
