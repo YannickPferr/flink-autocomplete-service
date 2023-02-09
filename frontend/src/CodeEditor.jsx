@@ -38,7 +38,6 @@ const CodeEditor = () => {
   const ref = useRef()
   const [target, setTarget] = useState()
   const [index, setIndex] = useState(0)
-  const [search, setSearch] = useState('')
   const [suggestionWindow, setSuggestionWindow] = useState([])
   const renderElement = useCallback(props => <Element {...props} />, [])
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
@@ -46,6 +45,12 @@ const CodeEditor = () => {
     () => withMentions(withReact(withHistory(createEditor()))),
     []
   )
+
+  const fetchQueryExplanation = (input) => {
+    fetch('http://localhost:8000//autocomplete/gpt/analysis?query=' + input)
+      .then((response) => response.text())
+      .then((queryExplanationResponse) => setSuggestionWindow([queryExplanationResponse]))
+  }
 
   const fetchQuerySuggestions = (input) => {
     fetch('http://localhost:8000/autocomplete?query=' + input)
@@ -81,7 +86,7 @@ const CodeEditor = () => {
         }
       }
     },
-    [index, search, target]
+    [index, target]
   )
 
   useEffect(() => {
@@ -92,7 +97,7 @@ const CodeEditor = () => {
       el.style.top = `${rect.top + window.pageYOffset + 24}px`
       el.style.left = `${rect.left + window.pageXOffset}px`
     }
-  }, [suggestionWindow.length, editor, index, search, target])
+  }, [suggestionWindow.length, editor, index, target])
 
   const blankSlateValue = [{ type: "paragraph", children: [{ text: "" }] }]
 
@@ -107,12 +112,16 @@ const CodeEditor = () => {
           const currentRange = getCurrentRange(editor)
           const currentText = Editor.string(editor, currentRange)
           if (currentText.length > 0) {
-            fetchQuerySuggestions(currentText)
-            setTarget(currentRange)
-            setSearch(currentText)
+            const lastChar = currentText.charAt(currentText.length - 1)
+            if (lastChar === ';') {
+              fetchQueryExplanation(currentText)
+              setTarget(currentRange)
+            } else {
+              fetchQuerySuggestions(currentText)
+              setTarget(currentRange)
+            }
           } else {
             setTarget(null)
-            setSearch('')
           }
           setIndex(0)
           return

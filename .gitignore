@@ -1,4 +1,4 @@
 venv
 __pycache__
-secrets_config.py
 node_modules
+backend/secrets_config.py

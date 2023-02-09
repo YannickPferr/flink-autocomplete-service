@@ -5,7 +5,7 @@ from service import autocomplete_from_docs, autocomplete_with_gpt, explanation_w
 app = Flask(__name__)
 CORS(app, support_credentials=True)
 
-
+@cross_origin(supports_credentials=True)
 @app.route("/autocomplete", methods=['GET'])
 def get_autocompletion_from_docs():
     if ('query' not in request.args):
@@ -20,7 +20,7 @@ def get_autocompletion_from_docs():
 
     return suggestions
 
-
+@cross_origin(supports_credentials=True)
 @app.route("/autocomplete/gpt", methods=['GET'])
 def get_autocompletion_with_gpt():
     if ('query' not in request.args):
@@ -30,7 +30,7 @@ def get_autocompletion_with_gpt():
 
     return autocomplete_with_gpt(query)
 
-
+@cross_origin(supports_credentials=True)
 @app.route("/autocomplete/gpt/analysis", methods=['GET'])
 def get_explanation_with_gpt():
     if ('query' not in request.args):
