@@ -44,7 +44,7 @@ def autocomplete_from_docs(query: str) -> list:
 def autocomplete_with_gpt(query: str) -> list:
     url = "https://api.openai.com/v1/engines/davinci/completions"
 
-    """ response = openai.Completion.create(
+    response = openai.Completion.create(
         model=config.gpt_model,
         prompt=f"{query}\n\n/* Generate multiple auto completions for the previous Flink SQL */",
         temperature=0.7,
@@ -55,9 +55,9 @@ def autocomplete_with_gpt(query: str) -> list:
     )
 
     # Response
-    text_response = response.choices.text """
+    text_response = response.choices[0].text
 
-    text_response = "\n\nSELECT order_id, item_name FROM orders WHERE\nSELECT order_id, customer_name FROM orders WHERE\nSELECT order_id, quantity FROM orders WHERE\nSELECT order_id, shipping_address FROM orders WHERE\nSELECT order_id, order_date FROM orders WHERE"
+    # text_response = "\n\nSELECT order_id, item_name FROM orders WHERE\nSELECT order_id, customer_name FROM orders WHERE\nSELECT order_id, quantity FROM orders WHERE\nSELECT order_id, shipping_address FROM orders WHERE\nSELECT order_id, order_date FROM orders WHERE"
 
     # Removing empty strings and break line
     suggestions = list(filter(None, text_response.split("\n")))
