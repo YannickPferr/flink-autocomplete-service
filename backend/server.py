@@ -1,7 +1,9 @@
 from flask import Flask, request
+from flask_cors import CORS, cross_origin
 from service import autocomplete_with_docs, autocomplete_with_gpt, explanation_with_gpt
 
 app = Flask(__name__)
+CORS(app, support_credentials=True)
 
 @app.route("/autocomplete", methods=['GET'])
 def get_autocompletion_with_docs():
@@ -32,4 +34,4 @@ def get_explanation_with_gpt():
 
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
